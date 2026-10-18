@@ -1,0 +1,13 @@
+NORTHFIELD UNIVERSITY - STUDENT ACCOUNTS OFFICE
+TUITION INVOICE (SYNTHETIC SAMPLE - NOT A REAL DOCUMENT)
+
+Institution: Northfield University
+Invoice No: NFU-2026-004571
+Beneficiary Name: Northfield University Tuition Account
+Beneficiary Account (IBAN): GB00 NFLD 0000 0000 4571 23
+Bank BIC/SWIFT: NFLDGB2L
+Amount Due: GBP 1,150.00
+Currency: GBP
+Due Date: 2026-10-30
+
+Please quote the invoice number when paying.

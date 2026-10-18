@@ -1,0 +1,8 @@
+Institution: Riverbend Language School
+Invoice No: RLS-8841
+Beneficiary Name: Riverbend Language School Ltd
+Beneficiary Account (IBAN): GB00 RIVR 0000 0000 1234 56
+Bank BIC/SWIFT: RIVRGB2L
+Amount Due: GBP 400.00
+Currency: GBP
+Due Date: 2026-11-05

@@ -1,0 +1,125 @@
+FeeShield AI demo run at 2026-10-18T09:26:12.468981+00:00 (SANDBOX / synthetic data only)
+
+==============================================================================
+STEP 1-2: Upload tuition invoice -> payment-intent record
+==============================================================================
+{
+  "institution": "NORTHFIELD UNIVERSITY",
+  "invoice_ref": "NFU2026004571",
+  "beneficiary_name": "NORTHFIELD UNIVERSITY TUITION ACCOUNT",
+  "account": "****7123",
+  "bic": "NFLDGB2L",
+  "amount": "1150.00",
+  "currency": "GBP",
+  "due_date": "2026-10-30"
+}
+Intent fingerprint: b83e72bd10f12c895680f355 ...  extraction: rules
+
+==============================================================================
+STEP 3: Student enters funds and upcoming essentials
+==============================================================================
+Available funds: 2000.00 USD | Rent due 2026-10-25: 400.00 USD (listed income: none assumed)
+
+==============================================================================
+STEP 4-5: Registry check, cost estimate, decision (bank wire vs fintech A vs card B)
+==============================================================================
+- Traditional bank wire (sample): pay 1570.12 USD (fees 25.00, 5.13% over mid-market) -> recipient gets 1150.00 GBP in 2-4 business days; remaining after rent 29.88 [TIGHT]  => HOLD
+- Fintech transfer A (sample): pay 1511.27 USD (fees 10.25, 1.19% over mid-market) -> recipient gets 1150.00 GBP in 1 business day; remaining after rent 88.73 [SAFE]  => ALLOW
+- Card-funded payment B (sample): pay 1537.26 USD (fees 28.66, 2.93% over mid-market) -> recipient gets 1150.00 GBP in same day; remaining after rent 62.74 [SAFE]  => ALLOW
+
+HOLD - nothing was sent. Something needs verification or your review first.
+
+[HOLD] EXCESSIVE_FEES: Fees and FX margin are 5.13% over the mid-market value (review threshold 3.00%). A cheaper option may exist.
+[HOLD] CASHFLOW_TIGHT: After this payment and listed essentials only 29.88 would remain, below your safety buffer of 50.00.
+
+Checks passed:
+  [ok] INJECTION: No instruction-like text found in the document.
+  [ok] INCOMPLETE_OR_INCONSISTENT: All required details are present and consistent.
+  [ok] BENEFICIARY_VERIFIED: Recipient details match the trusted registry record (SYNTHETIC demo registry (not real verification)).
+  [ok] INTENT_MATCH: Instruction matches the original invoice fingerprint.
+  [ok] DUPLICATE_INVOICE: No earlier payment found for this invoice.
+  [ok] OVER_TX_LIMIT: Within the per-transaction limit.
+  [ok] RATE_MOVED: Exchange rate is still within tolerance of the quote.
+
+Data label: ILLUSTRATIVE SAMPLE DATA (not a live quote)
+
+==============================================================================
+STEP 6: Second payment instruction with CHANGED BENEFICIARY
+==============================================================================
+BLOCK - nothing was sent. A mandatory security or authorization rule was violated.
+
+[BLOCK] BENEFICIARY_MISMATCH: The payment details do not match the trusted record for this institution. This is a classic sign of payment redirection fraud. Execution is blocked until the institution confirms the change through an independent channel and an administrator updates the registry.
+    - account: expected ****7123 but saw ****9999
+    - bic: expected NFLDGB2L but saw EVILGB2L
+    - beneficiary_name: expected Northfield University Tuition Account but saw Northfield Tuition Services Ltd
+[BLOCK] INTENT_CHANGED_CRITICAL: Recipient details differ from the original invoice.
+    - account: expected ****7123 but saw ****9999
+    - bic: expected NFLDGB2L but saw EVILGB2L
+    - beneficiary_name: expected NORTHFIELD UNIVERSITY TUITION ACCOUNT but saw NORTHFIELD TUITION SERVICES LTD
+
+Checks passed:
+  [ok] INJECTION: No instruction-like text found in the document.
+  [ok] INCOMPLETE_OR_INCONSISTENT: All required details are present and consistent.
+  [ok] DUPLICATE_INVOICE: No earlier payment found for this invoice.
+  [ok] OVER_TX_LIMIT: Within the per-transaction limit.
+  [ok] EXCESSIVE_FEES: Cost is 1.19% over the mid-market value, within limits.
+  [ok] RATE_MOVED: Exchange rate is still within tolerance of the quote.
+  [ok] CASHFLOW_SAFE: 88.73 would remain after the payment and listed essentials.
+
+Attempt to authorize the blocked instruction -> None
+Attempt to execute anyway -> REFUSED | policy outcome is BLOCK: BENEFICIARY_MISMATCH; INTENT_CHANGED_CRITICAL
+
+==============================================================================
+STEP 7: Alternative valid scenario (original verified beneficiary, Fintech A)
+==============================================================================
+ALLOW - every mandatory check passed. You can authorize this sandbox payment.
+
+
+Checks passed:
+  [ok] INJECTION: No instruction-like text found in the document.
+  [ok] INCOMPLETE_OR_INCONSISTENT: All required details are present and consistent.
+  [ok] BENEFICIARY_VERIFIED: Recipient details match the trusted registry record (SYNTHETIC demo registry (not real verification)).
+  [ok] INTENT_MATCH: Instruction matches the original invoice fingerprint.
+  [ok] DUPLICATE_INVOICE: No earlier payment found for this invoice.
+  [ok] OVER_TX_LIMIT: Within the per-transaction limit.
+  [ok] EXCESSIVE_FEES: Cost is 1.19% over the mid-market value, within limits.
+  [ok] RATE_MOVED: Exchange rate is still within tolerance of the quote.
+  [ok] CASHFLOW_SAFE: 88.73 would remain after the payment and listed essentials.
+
+Cash-flow timeline:
+         today  Pay tuition (all-in cost)    balance 488.73
+    2026-10-25  Rent                         balance 88.73
+Max affordable payment keeping a 50.00 buffer: 1550.00
+
+==============================================================================
+STEP 8: Authorized sandbox execution
+==============================================================================
+Without authorization -> no authorization token supplied
+Student types: AUTHORIZE E1784A
+Authorization token: AUTH-71F0F41E58BE
+Result: EXECUTED | authorized sandbox transfer completed | receipt: SBX-6EB9437A4D
+Sandbox balance after: 488.73
+Replay of same token -> policy outcome is BLOCK: DUPLICATE_INVOICE; OVER_DAILY_LIMIT
+Paying same invoice again -> BLOCK ['DUPLICATE_INVOICE', 'OVER_DAILY_LIMIT', 'INSUFFICIENT_FUNDS']
+
+==============================================================================
+AUDIT LOG (accounts masked) - hash chain valid: True
+==============================================================================
+# 1 2026-10-18T09:26:12 SESSION_START          system         {"ai_extraction": "disabled", "limits_fingerprint": "af2814f19f2815eb"}
+# 2 2026-10-18T09:26:12 INVOICE_INGESTED       agent          {"fingerprint": "b83e72bd10f12c89", "injection_hits": 0, "method": "rules", "missing": [], "summary": {"account": "****7123", "amount": "1150.00", "be
+# 3 2026-10-18T09:26:12 POLICY_DECISION        policy_engine  {"failed_rules": ["EXCESSIVE_FEES", "CASHFLOW_TIGHT"], "outcome": "HOLD", "params_hash": "373106d25df8", "scenario": "bank_wire", "total_cost": "1570.
+# 4 2026-10-18T09:26:12 POLICY_DECISION        policy_engine  {"failed_rules": [], "outcome": "ALLOW", "params_hash": "e1784a93c4a2", "scenario": "fintech_a", "total_cost": "1511.27"}
+# 5 2026-10-18T09:26:12 POLICY_DECISION        policy_engine  {"failed_rules": [], "outcome": "ALLOW", "params_hash": "a4de6a649871", "scenario": "card_b", "total_cost": "1537.26"}
+# 6 2026-10-18T09:26:12 INSTRUCTION_INGESTED   agent          {"fingerprint": "b6e2aed23fca8226", "injection_hits": 0, "missing": [], "summary": {"account": "****9999", "amount": "1150.00", "beneficiary_name": "N
+# 7 2026-10-18T09:26:12 POLICY_DECISION        policy_engine  {"failed_rules": ["BENEFICIARY_MISMATCH", "INTENT_CHANGED_CRITICAL"], "outcome": "BLOCK", "params_hash": "55528c501f66", "scenario": "fintech_a", "tot
+# 8 2026-10-18T09:26:12 AUTHORIZATION_DENIED   student        {"outcome_at_request": "BLOCK", "params_hash": "55528c501f66", "token": null}
+# 9 2026-10-18T09:26:12 EXECUTION_ATTEMPT      gateway        {"invoice_key": "NORTHFIELD UNIVERSITY|NFU2026004571", "params_hash": "55528c501f66", "policy_outcome": "BLOCK", "token_supplied": true}
+#10 2026-10-18T09:26:12 EXECUTION_REFUSED      gateway        {"invoice_key": "NORTHFIELD UNIVERSITY|NFU2026004571", "reason": "policy outcome is BLOCK: BENEFICIARY_MISMATCH; INTENT_CHANGED_CRITICAL"}
+#11 2026-10-18T09:26:12 EXECUTION_ATTEMPT      gateway        {"invoice_key": "NORTHFIELD UNIVERSITY|NFU2026004571", "params_hash": "e1784a93c4a2", "policy_outcome": "ALLOW", "token_supplied": false}
+#12 2026-10-18T09:26:12 EXECUTION_REFUSED      gateway        {"invoice_key": "NORTHFIELD UNIVERSITY|NFU2026004571", "reason": "no authorization token supplied"}
+#13 2026-10-18T09:26:12 AUTHORIZATION_ISSUED   student        {"outcome_at_request": "ALLOW", "params_hash": "e1784a93c4a2", "token": "AUTH-71F0F41E58BE"}
+#14 2026-10-18T09:26:12 EXECUTION_ATTEMPT      gateway        {"invoice_key": "NORTHFIELD UNIVERSITY|NFU2026004571", "params_hash": "e1784a93c4a2", "policy_outcome": "ALLOW", "token_supplied": true}
+#15 2026-10-18T09:26:12 EXECUTION_DONE         gateway        {"amount": "1511.27", "balance_after": "488.73", "beneficiary_account": "****7123", "currency": "USD", "invoice_key": "NORTHFIELD UNIVERSITY|NFU202600
+#16 2026-10-18T09:26:12 EXECUTION_ATTEMPT      gateway        {"invoice_key": "NORTHFIELD UNIVERSITY|NFU2026004571", "params_hash": "e1784a93c4a2", "policy_outcome": "BLOCK", "token_supplied": true}
+#17 2026-10-18T09:26:12 EXECUTION_REFUSED      gateway        {"invoice_key": "NORTHFIELD UNIVERSITY|NFU2026004571", "reason": "policy outcome is BLOCK: DUPLICATE_INVOICE; OVER_DAILY_LIMIT"}
+#18 2026-10-18T09:26:12 POLICY_DECISION        policy_engine  {"failed_rules": ["DUPLICATE_INVOICE", "OVER_DAILY_LIMIT", "INSUFFICIENT_FUNDS"], "outcome": "BLOCK", "params_hash": "e1784a93c4a2", "scenario": "fint

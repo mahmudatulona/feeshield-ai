@@ -1,0 +1,7 @@
+streamlit>=1.30
+pdfplumber>=0.11
+pytest>=7.0
+# optional, only for AI-assisted extraction:
+# anthropic>=0.40
+# optional, only to regenerate the sample PDF:
+# reportlab>=4.0
