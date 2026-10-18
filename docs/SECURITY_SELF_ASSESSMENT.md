@@ -21,4 +21,4 @@ Recipient mismatch -> BLOCK · unknown -> HOLD (unverified) · embedded instruct
 6. SQLite audit chain proves tamper *evidence* only if the latest hash is anchored externally; it is not.
 7. Daily-limit accounting uses the sandbox ledger and the scenario date; no timezone handling.
 8. No real sanctions/AML screening, no regulatory compliance claims.
-9. The Streamlit UI was written but could not be launched in the build environment (no package access); the engine/tests/demo were run.
+9. Testing scope: the engine, 30 automated tests, the CLI demo and the Streamlit UI were run on a Windows PC (Python 3.12.10) on 18 Oct 2026, and the ALLOW, HOLD, BLOCK and sandbox-execution flows were exercised in the UI (screenshots in evidence/screenshots). The optional Claude-assisted extraction was NOT run against the live API; only its grounding filter is tested with a fake model. No external security review or penetration test was performed.
