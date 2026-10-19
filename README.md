@@ -1,4 +1,5 @@
 # FeeShield AI
+Live demo (sandbox, synthetic data): https://feeshield-ai.streamlit.app
 
 Sandbox AI financial agent for international students (2026 Shenzhen International FinTech Competition, International Track, **Topic C**).
 It answers three questions before a cross-border payment: *Is the recipient the intended, verified one? What will it really cost? Can I afford it given upcoming essentials?* — and a separate policy engine decides **ALLOW / HOLD / BLOCK**.
